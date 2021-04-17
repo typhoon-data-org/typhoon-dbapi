@@ -1,6 +1,20 @@
-# Hello World Typhoon Extension
+# Typhoon DbAPI Extension
 
-Serves to show the structure and serve as a template for a Typhoon Extension
+Hooks and functions related to databases compatible with the [Python Database API Specification v2.0](https://www.python.org/dev/peps/pep-0249/).
+
+## Installation
+
+Run `pip install typhoon-dbapi` for the base package including functions and an EchoDb hook for testing purposes as well as SQLite.
+
+## Install extras
+
+For additional databases run:
+
+- **Snowflake**: `pip install typhoon-dbapi[snowflake]`
+- **Big Query**: `pip install typhoon-dbapi[bigquery]`
+- **Postgres**: `pip install typhoon-dbapi[postgres]`
+- **DuckDB**: `pip install typhoon-dbapi[duckdb]`
+- **MySQL**: `pip install typhoon-dbapi[mysql]`
 
 ## Virtualenv for development
 
