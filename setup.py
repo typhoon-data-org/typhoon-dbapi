@@ -26,4 +26,11 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
     install_requires=requirements,
+    extras_require={
+        'postgres': ['psycopg2'],
+        'sqlalchemy': ['sqlalchemy'],
+        'snowflake': ['snowflake-connector-python'],
+        'bigquery': ['google-cloud-bigquery'],
+        'duckdb': ['duckdb'],
+    },
 )
