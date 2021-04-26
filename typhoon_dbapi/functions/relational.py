@@ -4,7 +4,7 @@ from typing import Optional, NamedTuple, Sequence, Generator, Iterable
 
 import sqlparse
 
-from dbapi_hooks.hooks.dbapi_hooks import DbApiHook
+from typhoon_dbapi.hooks.dbapi_hooks import DbApiHook
 
 
 class ExecuteQueryResult(NamedTuple):
