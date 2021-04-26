@@ -7,11 +7,11 @@ with open("requirements.txt", "r") as fh:
     requirements = fh.read().splitlines(False)
 
 setuptools.setup(
-    name="dbapi_hooks",
+    name="typhoon_dbapi",
     version="0.0.1",
-    author="Example Author",
-    author_email="author@example.com",
-    description="A small example package",
+    author='Typhoon Data',
+    author_email='info.typhoon.data@gmail.com',
+    description="Hooks and functions related to databases compatible with the Python Database API Specification v2.0.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pypa/sampleproject",
@@ -20,7 +20,7 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache 2 License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     packages=setuptools.find_packages(),
