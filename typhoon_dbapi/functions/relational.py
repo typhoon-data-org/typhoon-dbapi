@@ -1,10 +1,12 @@
 import logging
 from contextlib import closing
-from typing import Optional, NamedTuple, Sequence, Generator, Iterable
+from io import BytesIO, StringIO
+from typing import Optional, NamedTuple, Sequence, Generator, Iterable, Union
 
 import sqlparse
 
 from typhoon_dbapi.hooks.dbapi_hooks import DbApiHook
+from typhoon_dbapi.hooks.sqlalchemy_hook import SqlAlchemyHook
 
 
 class ExecuteQueryResult(NamedTuple):
@@ -20,6 +22,7 @@ def execute_query(
         metadata: Optional[dict] = None,
         query_params: Optional[dict] = None,
         multi_query: bool = False,
+        file_stream: Union[bytes, str, BytesIO, StringIO, None] = None,
 ) -> Generator[ExecuteQueryResult, None, None]:
     """
     Executes query against a relational database. Schema and table name are returned with the result since they can be
@@ -30,40 +33,49 @@ def execute_query(
     :param query: Query. Can be a jinja2 template
     :param batch_size: Used as parameter to fetchmany. Full extraction if not defined.
     :param query_params: Will used to render the query template
+    :param file_stream: When executing a Snowflake PUT command, you can use this parameter to upload an in-memory file-like object (e.g. the I/O object returned from the Python open() function), rather than a file on the filesystem.
     :return: ExecuteQueryResult namedtuple
     """
+    kwargs = {}
+    if isinstance(file_stream, bytes):
+        file_stream = BytesIO(file_stream)
+    elif isinstance(file_stream, str):
+        file_stream = StringIO(file_stream)
+    if file_stream:
+        kwargs['file_stream'] = file_stream
     with hook as conn:
+        print(sqlparse.split(query))
         for single_query in (sqlparse.split(query) if multi_query else [query]):
             logging.info(f'Executing query: {single_query}')
             if isinstance(hook, SqlAlchemyHook):
-                cursor = conn.engine.execute(single_query, query_params)
+                cursor = conn.engine.execute(single_query, query_params, **kwargs)
                 columns = [x[0] for x in cursor._cursor_description()]
             else:
                 cursor = conn.cursor()
-                cursor.execute(single_query, query_params)
+                cursor.execute(single_query, query_params or [], **kwargs)
                 columns = [x[0] for x in cursor.description] if cursor.description else None
             
             # @todo put connection to autocommit=True
             #conn.commit()
 
-            if not batch_size:
-                logging.info(f'Fetching all results')
+        if not batch_size:
+            logging.info(f'Fetching all results')
+            yield ExecuteQueryResult(
+                metadata=metadata,
+                columns=columns,
+                batch=cursor.fetchall(),
+            )
+        else:
+            while True:
+                logging.info(f'Fetching {batch_size} rows')
+                batch = cursor.fetchmany(batch_size)
+                if not batch:
+                    break
                 yield ExecuteQueryResult(
                     metadata=metadata,
                     columns=columns,
-                    batch=cursor.fetchall(),
+                    batch=batch,
                 )
-            else:
-                while True:
-                    logging.info(f'Fetching {batch_size} rows')
-                    batch = cursor.fetchmany(batch_size)
-                    if not batch:
-                        break
-                    yield ExecuteQueryResult(
-                        metadata=metadata,
-                        columns=columns,
-                        batch=batch,
-                    )
 
 
 def read_sql(hook: DbApiHook, query: str, batch_size: Optional[int] = None, metadata: dict = None):

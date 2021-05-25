@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="typhoon_dbapi",
-    version="0.0.1",
+    version="0.0.2",
     author='Typhoon Data',
     author_email='info.typhoon.data@gmail.com',
     description="Hooks and functions related to databases compatible with the Python Database API Specification v2.0.",
@@ -32,5 +32,6 @@ setuptools.setup(
         'snowflake': ['snowflake-connector-python'],
         'bigquery': ['google-cloud-bigquery'],
         'duckdb': ['duckdb'],
+        'mssql': ['pymssql'],
     },
 )

@@ -72,7 +72,7 @@ class SnowflakeHook(DbApiHook):
         conn_params = self.conn_params
         credentials = {
             'account': conn_params.extra['account'],
-            'region': conn_params.extra['region'],
+            'region': conn_params.extra.get('region'),
             'user': conn_params.login,
             'password': conn_params.password,
             'database': conn_params.extra['database'],
@@ -151,6 +151,27 @@ class SqliteHook(DbApiHook):
         import sqlite3
 
         self.connection = sqlite3.connect(database=self.conn_params.extra['database'])
+        return self.connection
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.connection.close()
+
+
+class MssqlHook(DbApiConnection):
+    conn_type = 'mssql'
+
+    def __init__(self, conn_params):
+        self.conn_params = conn_params
+
+    def __enter__(self) -> DbApiConnection:
+        import pymssql
+
+        self.connection = pymssql.connect(
+            self.conn_params.extra.get('server'),
+            user=self.conn_params.login,
+            password=self.conn_params.password,
+            database=self.conn_params.extra.get('database')
+        )
         return self.connection
 
     def __exit__(self, exc_type, exc_val, exc_tb):
