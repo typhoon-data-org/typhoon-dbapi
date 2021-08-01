@@ -59,6 +59,31 @@ class PostgresHook(DbApiHook):
         self.connection = None
 
 
+class MySQLHook(DbApiHook):
+    conn_type = 'mysql'
+
+    def __init__(self, conn_params):
+        self.conn_params = conn_params
+        self.connection = None
+
+    def __enter__(self) -> DbApiConnection:
+        import mysql.connector
+
+        credentials = {
+            'host': self.conn_params.host,
+            'user': self.conn_params.login,
+            'password': self.conn_params.password,
+            'database': self.conn_params.extra.get('database'),
+            'port': self.conn_params.port
+        }
+        self.connection = mysql.connector.connect(**credentials)
+        return self.connection
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.connection.close()
+        self.connection = None
+
+
 class SnowflakeHook(DbApiHook):
     conn_type = 'snowflake'
 
