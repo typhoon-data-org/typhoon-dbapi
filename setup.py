@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="typhoon_dbapi",
-    version="0.0.2",
+    version="0.0.3",
     author='Typhoon Data',
     author_email='info.typhoon.data@gmail.com',
     description="Hooks and functions related to databases compatible with the Python Database API Specification v2.0.",
@@ -35,4 +35,5 @@ setuptools.setup(
         'duckdb': ['duckdb'],
         'mssql': ['pymssql'],
     },
+    setup_requires=['wheel'],
 )
