@@ -29,7 +29,7 @@ setuptools.setup(
     extras_require={
         'postgres': ['psycopg2'],
         'mysql': ['mysql-connector-python'],
-        'sqlalchemy': ['sqlalchemy'],
+        'alchemy': ['pandas', 'sqlalchemy'],
         'snowflake': ['snowflake-connector-python'],
         'bigquery': ['google-cloud-bigquery'],
         'duckdb': ['duckdb'],

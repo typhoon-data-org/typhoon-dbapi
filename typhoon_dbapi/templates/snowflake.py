@@ -3,8 +3,8 @@ from typing import List, Union, TypeVar, Generic, Tuple
 
 from dataclasses import dataclass
 
-from typhoon.contrib.schemas.metadata import FieldMetadata
 from typhoon.core.templated import Templated
+from typhoon_dbapi.schemas.metadata import FieldMetadata
 
 
 @dataclass

@@ -91,18 +91,3 @@ def execute_many(hook: DbApiHook, query: str, seq_of_params: Iterable[tuple], me
     with hook as conn, closing(conn.cursor()) as cursor:
         cursor.executemany(query, seq_of_params)
     return metadata
-
-
-# def df_write(df: DataFrame, hook: SqlAlchemyHook, table_name: str, schema: str = None):
-#     """
-#     Given conn_id belonging to a SqlAlchemy hook, create or append the data to the specified table
-#     :param df: Dataframe with data
-#     :param hook: SqlAlchemyHook instance
-#     :param table_name: Name of the table to write to
-#     :param schema: Schema where the table is located
-#     :return:
-#     """
-#     with hook as engine:
-#         logging.info(f'Writing dataframe to {hook.conn_params.conn_type} table {table_name}, schema {schema or "default"}')
-#         df.to_sql(name=table_name, con=engine, schema=schema, if_exists='append')
-#     return schema, table_name
